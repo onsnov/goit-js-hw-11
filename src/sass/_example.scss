@@ -26,3 +26,54 @@
   background-size: cover;
   background-position: center;
 }
+* {
+  box-sizing: border-box;
+}
+
+ .info-item {
+  margin-top: 0;
+  margin-bottom: 0;
+ }
+
+.photo-card {
+  margin-top: 10px;
+    //  display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+}
+
+.search-form{
+  text-align: center;
+  
+  background-color: rgb(63, 95, 143);
+  padding-bottom: 6px;
+  padding-top: 6px;
+}
+
+input {
+  border-radius: 5px;
+}
+img {
+  display: block;
+}
+
+.gallery {
+  display: flex;  
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.load-more {
+  margin: auto;
+  display: block;
+  background-color: #ff6b0a;
+  border-radius: 3px;
+  margin-top: 20px;
+}
+
+.is-hidden {
+  display: none;
+}
