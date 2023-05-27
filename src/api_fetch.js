@@ -11,11 +11,11 @@ export default class getPicturesService {
 
   async getPictures() {
 
-    const  data =await axios.get(
+    const { data } =await axios.get(
           `${URL}?key=${API_KEY}&q=${this.query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`
         );
-    console.log(data)
-    return data;
+     this.page+=1
+     return data;
    
   }
 
