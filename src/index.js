@@ -1,7 +1,9 @@
 import API from "./api_fetch";
+import getPicturesService from './api_fetch.js';
 import './sass/index.scss';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';    
 import axios from 'axios';
+console.log (getPicturesService)
 
 
 const refs = {
@@ -10,6 +12,7 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
+const getPicturesService = new getPicturesService();
 let page = 1;
 let searchValue = "";
 
@@ -28,29 +31,29 @@ function onSubmit(e)
     
   }
   else
-    searchValue = form_value;
+    getPicturesService.query = form_value;
    clearPicturesList();
-         API.getPictures(form_value)
-           .then(({ hits,totalHits }) => {
-             console.log(hits);
-             if (hits.length === 0) {
+          getPicturesService.getPictures()
+           .then(data => {
+             //  console.log(hits);
+             if (data.hits.length === 0) {
                refs.loadMoreBtn.classList.add('is-hidden');
                Notify.info(
                  'Sorry, there are no images matching your search query. Please try again.'
                );
              } else {
-               Notify.success(
-                 `Hooray! We found ${totalHits} images.`
-               );
+               Notify.success(`Hooray! We found ${data.totalHits} images.`);
              }
-             
-           refs.loadMoreBtn.classList.remove('is-hidden');
-           return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
-           
-         }) 
-                    
-        .then(updatePicturesList)
-         .catch(onEror);
+
+             refs.loadMoreBtn.classList.remove('is-hidden');
+             return data.hits.reduce(
+               (markup, hit) => createMarkup(hit) + markup,
+               ''
+             );
+           })
+
+           .then(updatePicturesList)
+           .catch(onEror);
    }
 
 function createMarkup({
@@ -89,12 +92,12 @@ function updatePicturesList(markup) {
 function onLoadMore() {
   page += 1;
   API.getPictures(searchValue, page)
-    .then(({ hits}) => {
-      if (hits.length === 0)
+    .then((data) => {
+      if (data.hits.length === 0)
         return Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
-      return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
+      return data.hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
     })
     // .then(({ hits, totalHits }) => {
     //   if (hits.length >= totalHits)
