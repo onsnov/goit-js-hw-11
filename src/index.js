@@ -31,9 +31,9 @@ async function onSubmit(e) {
   } else getPicturesService.query = form_value;
   clearPicturesList();
    try {
-    const { hits, totalHits } = await getPicturesService.getPictures(
-      form_value
-    );
+     const { hits, totalHits } = await getPicturesService.getPictures(form_value);
+     console.log(hits);
+     updatePicturesList();
     
       if (hits.length === 0) {
           refs.loadMoreBtn.classList.add('is-hidden');
@@ -48,7 +48,7 @@ async function onSubmit(e) {
                
     } 
      return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
-     updatePicturesList();
+     
   } catch (err) {
     
     onEror(err);
@@ -71,39 +71,37 @@ async function onSubmit(e) {
   // .catch(onEror);
   
 }
-    function updatePicturesList(markup) {
-  refs.imageWrapper.insertAdjacentHTML('beforeend', markup);
  
-  }
-
-function createMarkup({
-  webformatURL,
-  largeImageURL,
+function createMarkup(
+{
+   webformatURL,
+   largeImageURL,
   tags,
-  likes,
-  views,
-  comments,
-  downloads,
-}) {
-  return `<div class="photo-card">
-  <a class='gallery__link' href='${largeImageURL}'><img src="${webformatURL}" alt="${tags}" width=280px 
+   likes,
+   views,
+   comments,
+   downloads,}
+) {
+  
+   return `<div class="photo-card">
+   <a class='gallery__link' href='${largeImageURL}'><img src="${webformatURL}" alt="${tags}" width=280px 
     height=200px;
-loading="lazy" /></a>
+ loading="lazy" /></a>
   <div class="info">
-    <p class="info-item">
-      <b>Likes: ${likes}</b>
-    </p>
-    <p class="info-item">
-      <b>Views: ${views}</b>
-    </p>
-    <p class="info-item">
-      <b>Comments: ${comments}</b>
-    </p>
-    <p class="info-item">
+     <p class="info-item">
+       <b>Likes: ${likes}</b>
+     </p>
+     <p class="info-item">
+       <b>Views: ${views}</b>
+     </p>
+     <p class="info-item">
+       <b>Comments: ${comments}</b>
+     </p>
+     <p class="info-item">
       <b>Downloads: ${downloads}</b>
     </p>
-  </div>
-</div>`;
+   </div>
+ </div>`;
 }
 
 function updatePicturesList(markup) {
