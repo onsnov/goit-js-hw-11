@@ -44,7 +44,7 @@ async function onSubmit(e) {
       } else {
         Notify.success(`Hooray! We found ${totalHits} images.`);
         refs.loadMoreBtn.classList.remove('is-hidden');
-        updatePicturesList();
+        
                
     } 
      return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
