@@ -18,15 +18,16 @@ let searchValue = '';
 refs.searchForm.addEventListener('submit', onSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
-async function onSubmit(e) {
+function onSubmit(e) {
   e.preventDefault();
   const form = e.currentTarget;
   const form_value = form.elements.searchQuery.value.trim();
 
-  if (form_value === '  ') {
+  if (form_value ==="" ) {
     refs.loadMoreBtn.classList.add('is-hidden');
     Notify.failure('Щось введи для пошуку');
-  } else getPicturesService.query = form_value;
+    teturn;
+  } else { getPicturesService.query = form_value };
   clearPicturesList();
   getPicturesService.getPictures(form_value)
     .then(data => {
@@ -39,8 +40,7 @@ async function onSubmit(e) {
         Notify.success(`Hooray! We found ${data.totalHits} images.`);
       }
 
-      refs.loadMoreBtn.classList.remove('is-hidden');
-      return data.hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
+          return data.hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
     })
     .then(updatePicturesList)
     .catch(onEror)
@@ -103,10 +103,12 @@ function onLoadMore() {
   getPicturesService
     .getPictures(searchValue, page)
     .then(data => {
-      if (data.hits.length === 0)
-        return Notify.info(
+      if (data.hits.length === 0) {
+        refs.loadMoreBtn.classList.add('is-hidden');
+        Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
+      } 
       return data.hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
     })
 
