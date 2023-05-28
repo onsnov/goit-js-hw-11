@@ -1,9 +1,11 @@
-// import API from "./api_fetch";
 import GetPicturesService from './api_fetch.js';
 import './sass/index.scss';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import axios from 'axios';
-// console.log (getPicturesService)
+import SimpleLightbox from 'simplelightbox';
+
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
+
 
 const refs = {
   searchForm: document.querySelector('.search-form'),
@@ -14,33 +16,41 @@ const refs = {
 const getPicturesService = new GetPicturesService();
 let page = 1;
 let searchValue = '';
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 refs.searchForm.addEventListener('submit', onSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onSubmit(e) {
-  e.preventDefault();
+   e.preventDefault();
   const form = e.currentTarget;
   const form_value = form.elements.searchQuery.value.trim();
 
   if (form_value ==="" ) {
     refs.loadMoreBtn.classList.add('is-hidden');
     Notify.failure('Щось введи для пошуку');
-    teturn;
+    return;
   } else { getPicturesService.query = form_value };
   clearPicturesList();
+  refs.loadMoreBtn.classList.add('is-hidden');
   getPicturesService.getPictures(form_value)
+  
     .then(data => {
-      if (data.hits.length === 0) {
+      console.log(data)
+      
+      if (data.hits.length ===0) {
         refs.loadMoreBtn.classList.add('is-hidden');
         Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
       } else {
         Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        refs.loadMoreBtn.classList.remove('is-hidden');
       }
-
-          return data.hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
+       return data.hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
     })
     .then(updatePicturesList)
     .catch(onEror)
@@ -72,7 +82,7 @@ function createMarkup({
   comments,
   downloads,
 }) {
-  return `<div class="photo-card">
+  return `
    <a class='gallery__link' href='${largeImageURL}'><img src="${webformatURL}" alt="${tags}" width=280px 
     height=200px;
  loading="lazy" /></a>
@@ -90,19 +100,24 @@ function createMarkup({
       <b>Downloads: ${downloads}</b>
     </p>
    </div>
- </div>`;
+ `;
+  
 }
 
 function updatePicturesList(markup) {
-   refs.imageWrapper.insertAdjacentHTML('beforeend', markup);
-  console.log(markup);
+
+  refs.imageWrapper.insertAdjacentHTML('beforeend', markup);
+  
+   console.log(markup);
 }
 
 function onLoadMore() {
   page += 1;
+  lightbox.refresh();
   getPicturesService
     .getPictures(searchValue, page)
     .then(data => {
+      // console.log(per_page)
       if (data.hits.length === 0) {
         refs.loadMoreBtn.classList.add('is-hidden');
         Notify.info(
